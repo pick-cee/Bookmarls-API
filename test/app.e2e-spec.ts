@@ -5,7 +5,7 @@ import { INestApplication, ValidationPipe } from "@nestjs/common"
 import { PrismaService } from "../src/prisma/prisma.service"
 import { AuthDto } from "../src/auth/dto"
 import { EditUserDto } from "../src/user/dto"
-import { CreateBookmarkDto } from "src/bookmark/dto"
+import { CreateBookmarkDto, EditBookmarkDto } from "src/bookmark/dto"
 
 
 describe('App e2e', () => {
@@ -109,24 +109,48 @@ describe('App e2e', () => {
       it("should create bookmark", () => {
         return pactum.spec().post('/bookmarks').withHeaders({
           Authorization: 'Bearer $S{userAt}',
-        }).withBody(dto).expectStatus(201)
+        }).withBody(dto).expectStatus(201).stores('bookmarkId', 'id')
       })
     })
 
     describe("Get bookmarks", () => {
-      
+      it("should get all bookmarks", () => {
+        return pactum.spec().get('/bookmarks').withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          }).expectStatus(200)
+      })
     })
 
     describe("Get bookmark by id", () => {
-
+      it("should get bookmarks by id", () => {
+        return pactum.spec().get('/bookmarks/id').withPathParams('id', '${bookmarkId}').withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          }).expectStatus(200)
+      })
     })
 
-    describe("Edit bookmark by id", () => {
-
+    describe("Edit bookmark by email", () => {
+      const dto: EditBookmarkDto = {
+        description: 'testing some stuff'
+      }
+      it("should edit bookmarks by id", () => {
+        return pactum.spec().patch('/bookmarks/id').withPathParams('id', '${bookmarkId}').withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          }).withBody(dto).expectStatus(200)
+      })
     })
 
-    describe("Delete bookmark by id", () => {
-
+    describe("Delete bookmark by email", () => {
+      it("should delete bookmarks by id", () => {
+        return pactum.spec().delete('/bookmarks/id').withPathParams('id', '${bookmarkId}').withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          }).expectStatus(204)
+      })
+      it("should get empty bookmarks", () => {
+        return pactum.spec().get('/bookmarks').withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          }).expectStatus(200).expectBody([])
+      })
     })
   })
 })
