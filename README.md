@@ -71,3 +71,6 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Postman Documentation
+This si the link to the postman documentation of this bookmarks API. [Postman Docs](https://documenter.getpostman.com/view/16987750/2s946bBEyW)
